@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Find Your Cool Spot on the Bus</title>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&display=swap" rel="stylesheet">
+    <!-- Add SunCalc.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/suncalc/1.9.0/suncalc.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-image: linear-gradient(90000deg, #fba70b, #dec483);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            overflow: hidden;
+        }
+        .main-container {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .container {
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            width: 100vw;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+        h1 {
+            color: #333;
+            font-family: 'DM Serif Display', serif;
+            margin-bottom: 20px;
+        }
+        .input-group {
+            margin-bottom: 15px;
+            text-align: left;
+            width: 50%;
+            position: relative;
+        }
+        .input-group label {
+            font-size: 16px;
+            color: #555;
+            display: block;
+            margin-bottom: 5px;
+        }
+        .input-field {
+            width: 100%;
+            padding: 10px;
+            margin-top: 5px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+        img {   
+            height: auto;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            width: 250px;
+        }
+        .button {
+            padding: 12px 20px;
+            background-color: #0d0d0e;
+            color: #fff;
+            border: none;
+            border-radius: 4%;
+            cursor: pointer;
+            font-size: 16px;
+            width: 10%;
+            min-width: 150px;
+        }
+        .button:hover {
+            background-color: #494851;
+        }
+        .message {
+            margin-top: 20px;
+            color: #333;
+        }
+        .suggestions {
+            position: absolute;
+            width: 100%;
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            max-height: 200px;
+            overflow-y: auto;
+            z-index: 1000;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            display: none;
+        }
+        .suggestion-item {
+            padding: 10px;
+            cursor: pointer;
+            border-bottom: 1px solid #eee;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .suggestion-item:hover {
+            background-color: #f5f5f5;
+        }
+        .result-container {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: rgba(255, 255, 255, 0.9);
+            border-radius: 8px;
+            display: none;
+        }
+        .recommended-side {
+            font-weight: bold;
+            color: #0d0d0e;
+            font-size: 1.2em;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <section class="main-container">
+        <img src="./sunlo.png" alt="sunlo">
+        <div class="container">
+            <h1>Find Your Cool Spot on the Bus</h1>
+            
+            <div class="input-group">
+                <label for="fromLocation">From:</label>
+                <input type="text" id="fromLocation" class="input-field" placeholder="Enter From Location">
+                <div id="fromSuggestions" class="suggestions"></div>
+            </div>
+
+            <div class="input-group">
+                <label for="toLocation">To:</label>
+                <input type="text" id="toLocation" class="input-field" placeholder="Enter To Location">
+                <div id="toSuggestions" class="suggestions"></div>
+            </div>
+
+            <div class="input-group">
+                <label for="departureTime">Departure Time:</label>
+                <input type="datetime-local" id="departureTime" class="input-field">
+            </div>
+            
+            <button class="button" onclick="checkLocations()">Check</button>
+            
+            <div id="message" class="message"></div>
+            <div id="resultContainer" class="result-container">
+                <div id="recommendation" class="recommended-side"></div>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        let fromCoordinates = null;
+        let toCoordinates = null;
+
+        // Set default departure time to current time
+        window.onload = function() {
+            const now = new Date();
+            now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
+            document.getElementById('departureTime').value = now.toISOString().slice(0,16);
+        };
+
+        function debounce(func, wait) {
+            let timeout;
+            return function(...args) {
+                clearTimeout(timeout);
+                timeout = setTimeout(() => func.apply(this, args), wait);
+            };
+        }
+
+        async function searchLocation(query, suggestionsId) {
+            const suggestionsDiv = document.getElementById(suggestionsId);
+            
+            if (query.length < 3) {
+                suggestionsDiv.style.display = 'none';
+                return;
+            }
+
+            try {
+                suggestionsDiv.innerHTML = '<div class="suggestion-item">Loading...</div>';
+                suggestionsDiv.style.display = 'block';
+
+                const response = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&limit=5`);
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                const data = await response.json();
+                displaySuggestions(data, suggestionsId);
+            } catch (error) {
+                console.error('Error searching locations:', error);
+                suggestionsDiv.innerHTML = '<div class="suggestion-item">Error loading suggestions. Please try again.</div>';
+            }
+        }
+
+        function displaySuggestions(suggestions, suggestionsId) {
+            const suggestionsDiv = document.getElementById(suggestionsId);
+            suggestionsDiv.innerHTML = '';
+            
+            if (suggestions.length === 0) {
+                suggestionsDiv.innerHTML = '<div class="suggestion-item">No locations found</div>';
+                return;
+            }
+
+            suggestions.forEach(place => {
+                const div = document.createElement('div');
+                div.className = 'suggestion-item';
+                const displayName = formatDisplayName(place.display_name);
+                div.textContent = displayName;
+                div.onclick = () => selectLocation(place, suggestionsId);
+                suggestionsDiv.appendChild(div);
+            });
+
+            suggestionsDiv.style.display = 'block';
+        }
+
+        function formatDisplayName(displayName) {
+            const parts = displayName.split(', ');
+            const mainPlace = parts[0];
+            const locationContext = parts.slice(-3).join(', ');
+            return `${mainPlace} (${locationContext})`;
+        }
+
+        function selectLocation(place, suggestionsId) {
+            const isFromLocation = suggestionsId === 'fromSuggestions';
+            const inputId = isFromLocation ? 'fromLocation' : 'toLocation';
+            
+            const formattedName = formatDisplayName(place.display_name);
+            document.getElementById(inputId).value = formattedName;
+            document.getElementById(suggestionsId).style.display = 'none';
+
+            const coordinates = {
+                lat: parseFloat(place.lat),
+                lon: parseFloat(place.lon)
+            };
+
+            if (isFromLocation) {
+                fromCoordinates = coordinates;
+            } else {
+                toCoordinates = coordinates;
+            }
+        }
+
+        function recommendBusSeat(fromLat, fromLng, toLat, toLng, departureTime) {
+            const midLat = (parseFloat(fromLat) + parseFloat(toLat)) / 2;
+            const midLng = (parseFloat(fromLng) + parseFloat(toLng)) / 2;
+
+            const sunPosition = SunCalc.getPosition(
+                departureTime,
+                midLat,
+                midLng
+            );
+
+            const azimuthDegrees = (sunPosition.azimuth * 180 / Math.PI + 180) % 360;
+            const bearing = calculateBearing(fromLat, fromLng, toLat, toLng);
+            const relativeSunPosition = (azimuthDegrees - bearing + 360) % 360;
+
+            if (relativeSunPosition > 180) {
+                return {
+                    side: 'right',
+                    explanation: 'Choose the right side of the bus to avoid direct sunlight'
+                };
+            } else {
+                return {
+                    side: 'left',
+                    explanation: 'Choose the left side of the bus to avoid direct sunlight'
+                };
+            }
+        }
+
+        function calculateBearing(lat1, lon1, lat2, lon2) {
+            const toRad = degree => degree * Math.PI / 180;
+            const toDeg = rad => rad * 180 / Math.PI;
+
+            const φ1 = toRad(lat1);
+            const φ2 = toRad(lat2);
+            const Δλ = toRad(lon2 - lon1);
+
+            const y = Math.sin(Δλ) * Math.cos(φ2);
+            const x = Math.cos(φ1) * Math.sin(φ2) -
+                Math.sin(φ1) * Math.cos(φ2) * Math.cos(Δλ);
+
+            const θ = Math.atan2(y, x);
+            return (toDeg(θ) + 360) % 360;
+        }
+
+        function checkLocations() {
+            const fromLocation = document.getElementById("fromLocation").value;
+            const toLocation = document.getElementById("toLocation").value;
+            const departureTimeInput = document.getElementById("departureTime");
+            const message = document.getElementById("message");
+            const resultContainer = document.getElementById("resultContainer");
+            const recommendationDiv = document.getElementById("recommendation");
+
+            if (!fromCoordinates || !toCoordinates) {
+                message.textContent = "Please select both locations from the suggestions";
+                message.style.color = "red";
+                return;
+            }
+
+            if (!departureTimeInput.value) {
+                message.textContent = "Please select a departure time";
+                message.style.color = "red";
+                return;
+            }
+
+            const departureTime = new Date(departureTimeInput.value);
+            
+            const recommendation = recommendBusSeat(
+                fromCoordinates.lat,
+                fromCoordinates.lon,
+                toCoordinates.lat,
+                toCoordinates.lon,
+                departureTime
+            );
+
+            message.textContent = `Journey from ${fromLocation} to ${toLocation}`;
+            message.style.color = "#333";
+            
+            recommendationDiv.innerHTML = `
+                <h3>Recommended Seat Position:</h3>
+                <p>${recommendation.explanation}</p>
+            `;
+            
+            resultContainer.style.display = 'block';
+
+            const locationData = {
+                from: fromCoordinates,
+                to: toCoordinates,
+                fromAddress: fromLocation,
+                toAddress: toLocation,
+                departureTime: departureTime,
+                recommendation: recommendation
+            };
+            localStorage.setItem('travelLocations', JSON.stringify(locationData));
+        }
+
+        // Add event listeners with debounce
+        document.addEventListener('DOMContentLoaded', function() {
+            const fromInput = document.getElementById('fromLocation');
+            const toInput = document.getElementById('toLocation');
+
+            fromInput.addEventListener('input', 
+                debounce(e => searchLocation(e.target.value, 'fromSuggestions'), 300)
+            );
+
+            toInput.addEventListener('input', 
+                debounce(e => searchLocation(e.target.value, 'toSuggestions'), 300)
+            );
+
+            // Close suggestions when clicking outside
+            document.addEventListener('click', function(e) {
+                if (!e.target.closest('.input-group')) {
+                    document.getElementById('fromSuggestions').style.display = 'none';
+                    document.getElementById('toSuggestions').style.display = 'none';
+                }
+            });
+        });
+    </script>
+</body>
+</html>
