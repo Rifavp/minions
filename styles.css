@@ -1,0 +1,52 @@
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  /* Gradient background */
+  background: linear-gradient(9000deg, #fba70b, #dce483);
+  text-align: center;
+}
+
+h1 {
+  font-family: 'Lilita One', cursive; /* Apply Lilita One font */
+  font-size: 2.5rem;
+  color: #fb0b0b;
+  margin-bottom: 20px;
+}
+
+img {
+
+    max-width: 100%; /* Ensures the image is responsive */
+    height: auto; /* Maintains the aspect ratio */
+    border-radius: 10px; /* Rounds the corners */
+    margin-bottom: 20px; /* Adds space below the image */
+    width: 300px; /* Optional: Set a specific width */
+  
+}
+
+p {
+  font-family: 'Acme', sans-serif; /* Apply Acme font */
+  font-size: 1.2rem;
+  color: #555;
+  margin: 10px 0;
+}
+
+button {
+  padding: 10px 20px;
+  font-size: 1rem;
+  color: #fff;
+  background-color: #0d0d0e;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-top: 20px;
+}
+
+button:hover {
+  background-color: #404851;
+}
