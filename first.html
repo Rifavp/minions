@@ -263,15 +263,17 @@
             const relativeSunPosition = (azimuthDegrees - bearing + 360) % 360;
 
             if (relativeSunPosition > 180) {
-                return {
-                    side: 'right',
-                    explanation: 'Choose the right side of the bus to avoid direct sunlight'
-                };
+          return   window.location.href = "/result.html?data=right"
+                // return {
+                //     side: 'right',
+                //     explanation: 'Choose the right side of the bus to avoid direct sunlight'
+                // };
             } else {
-                return {
-                    side: 'left',
-                    explanation: 'Choose the left side of the bus to avoid direct sunlight'
-                };
+           return     window.location.href = "/result.html?data=left"
+                // return {
+                //     side: 'left',
+                //     explanation: 'Choose the left side of the bus to avoid direct sunlight'
+                // };
             }
         }
 

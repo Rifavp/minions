@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sunlo - Your Journey</title>
+  <link rel="stylesheet" href="styles.css">
+  <!-- Add Lilita One and Acme fonts from Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Lilita+One&family=Acme&display=swap" rel="stylesheet">
+</head>
+<body>
+  <h1>Sunlo</h1>
+  <img id="sideImage" src="" alt="side" style="width:300px;">
+  <p id="sideText"></p>
+  <p>Enjoy your journey!</p>
+  <button id="tryAnotherBtn">Try Another</button>
+
+  <script>
+    // Function to get URL parameter by name
+    function getURLParameter(name) {
+      const urlParams = new URLSearchParams(window.location.search);
+      return urlParams.get(name);
+    }
+
+    // Get the 'data' parameter from the URL
+    const side = getURLParameter('data');
+    const sideImage = document.getElementById('sideImage');
+    const sideText = document.getElementById('sideText');
+
+    if (side === 'right') {
+      // Update the image and text for 'right' side
+      sideImage.src = './right.png';  // Image for the right side
+      sideText.textContent = 'Your best choice is the right side of the bus to avoid direct sunlight.';
+    } else if (side === 'left') {
+      // Update the image and text for 'left' side
+      sideImage.src = './left.png';  // Image for the left side (make sure to have this image in your project)
+      sideText.textContent = 'Your best choice is the left side of the bus to avoid direct sunlight.';
+    } else {
+      // Handle the case where no valid 'data' parameter is found (fallback)
+      sideText.textContent = 'Sorry, we could not determine the best side for you.';
+    }
+
+    // Handle the "Try Another" button
+    document.getElementById('tryAnotherBtn').addEventListener('click', function() {
+      window.location.href = '/';  // Redirect back to the main page
+    });
+  </script>
+</body>
+</html>
