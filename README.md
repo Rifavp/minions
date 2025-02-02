@@ -6,94 +6,50 @@
 
 
 ### Team Members
-- Member 1: [Name] - [College]
-- Member 2: [Name] - [College]
-- Member 3: [Name] - [College]
+- Member 1: Rifa vp - EMEA College of arts and science, kondotty
+- Member 2: Haniya Sherine -  EMEA College of arts and science, kondotty
+- Member 3: Fathima Rabeeha -  EMEA College of arts and science, kondotty
 
 ### Hosted Project Link
 [mention your project hosted project link here]
 
 ### Project Description
-[2-3 lines about what your project does]
+A web that helps bus riders find a window seat in the shade, avoiding direct sunlight based on the time of day , bus route and weather condition.
 
 ### The Problem statement
-[What ridiculous problem are you solving?]
+Finding a shaded window seat on the bus can be difficult , especially during hot sunny days.
 
 ### The Solution
-[How are you solving it? Keep it fun!]
+This web helps users identify which seats are shaded based on time of day , bus route direction and weather.
 
 ## Technical Details
 ### Technologies/Components Used
 For Software:
-- [Languages used]
-- [Frameworks used]
-- [Libraries used]
-- [Tools used]
+- html , css , javascript 
+- Suncalc.js api , openstreet map api
+- VS Code 
 
-For Hardware:
-- [List main components]
-- [List specifications]
-- [List tools required]
-
-### Implementation
-For Software:
-# Installation
-[commands]
-
-# Run
-[commands]
+# Run 
+open index.html in any latest browser 
 
 ### Project Documentation
 For Software:
+html ,  css, javascript
+
 
 # Screenshots (Add at least 3)
-![Screenshot1](Add screenshot 1 here with proper name)
-*Add caption explaining what this shows*
+![screenshot1](assets/Screenshot%20(58).png)
 
-![Screenshot2](Add screenshot 2 here with proper name)
-*Add caption explaining what this shows*
+![Screenshot2](assets/Screenshot%20(59).png)
 
-![Screenshot3](Add screenshot 3 here with proper name)
-*Add caption explaining what this shows*
-
-# Diagrams
-![Workflow](Add your workflow/architecture diagram here)
-*Add caption explaining your workflow*
-
-For Hardware:
-
-# Schematic & Circuit
-![Circuit](Add your circuit diagram here)
-*Add caption explaining connections*
-
-![Schematic](Add your schematic diagram here)
-*Add caption explaining the schematic*
-
-# Build Photos
-![Team](Add photo of your team here)
+![Screenshot3](assets/Screenshot%20(60).png)
 
 
-![Components](Add photo of your components here)
-*List out all components shown*
-
-![Build](Add photos of build process here)
-*Explain the build steps*
-
-![Final](Add photo of final product here)
-*Explain the final build*
-
-### Project Demo
-# Video
-[Add your demo video link here]
-*Explain what the video demonstrates*
-
-# Additional Demos
-[Add any extra demo materials/links]
 
 ## Team Contributions
-- [Name 1]: [Specific contributions]
-- [Name 2]: [Specific contributions]
-- [Name 3]: [Specific contributions]
+- Rifa vp: Front end of two page developed 
+- Haniya Sherine: Suncalc.js integration and gitu=hub setup 
+- Fathima Rabeeha: openstreet map api integration and dealing with AI
 
 ---
 Made with ❤️ at TinkerHub
