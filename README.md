@@ -1,8 +1,8 @@
-# [Project Name] 🎯
+# Sunlo 🎯
 
 
 ## Basic Details
-### Team Name: [Name]
+### Team Name: Minions
 
 
 ### Team Members
@@ -11,7 +11,7 @@
 - Member 3: Fathima Rabeeha -  EMEA College of arts and science, kondotty
 
 ### Hosted Project Link
-[mention your project hosted project link here]
+minions-six.vercel.app
 
 ### Project Description
 A web that helps bus riders find a window seat in the shade, avoiding direct sunlight based on the time of day , bus route and weather condition.
